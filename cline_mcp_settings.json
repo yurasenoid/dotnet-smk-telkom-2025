@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "API specification": {
+      "command": "npx",
+      "args": ["-y", "apidog-mcp-server@latest", "docs/openapi.json"]
+    }
+  }
+}

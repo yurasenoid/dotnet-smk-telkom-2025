@@ -1,0 +1,6 @@
+@dotnet_smk_telkom_2025_HostAddress = http://localhost:5088
+
+GET {{dotnet_smk_telkom_2025_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
