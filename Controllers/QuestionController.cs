@@ -28,7 +28,13 @@ public class QuestionController : ControllerBase
   )
   {
     // Business logic: discount should be applied as int
-    int discountValue = int.Parse(discount); // <--- Crashes if input is not a number
+    // Me : Berhasil Sir!
+    int discountValue;
+    bool isValidDiscount = int.TryParse(discount, out discountValue);
+    if (!isValidDiscount)
+    {
+      return BadRequest(new { error = "Invalid discount value. It must be a number." });
+    }
 
     int price = 1000;
     int finalPrice = price - discountValue;
@@ -52,10 +58,11 @@ public class QuestionController : ControllerBase
     public string Name { get; set; }
     public string? Email { get; set; }
 
+
     public string GetInitial()
     {
       return Name.Substring(0, 1).ToUpper();
-    }
+    } 
 
     //! DONT CHANGE THIS FUNCTION
     public static User GetFromExternalSource()
@@ -72,6 +79,11 @@ public class QuestionController : ControllerBase
   {
     //! DONT CHANGE THIS LINE
     var user = User.GetFromExternalSource(); // <--Simulate missing data
+
+    if (string.IsNullOrEmpty(user.Name))
+    {
+      return BadRequest(new { error = "User name is missing." });
+    }
 
     return Ok(new
     {
@@ -96,7 +108,7 @@ public class QuestionController : ControllerBase
   )
   {
     // TODO: Business rule: apply discount based on % of price
-    int discount = requestDto.Price / requestDto.DiscountPercent; // <-- Wrong formula!
+    int discount = (requestDto.Price * requestDto.DiscountPercent) / 100; // <-- Wrong formula!
     int finalPrice = requestDto.Price - discount;
 
     return Ok(new
@@ -137,12 +149,13 @@ public class QuestionController : ControllerBase
       if (this.IsMember)
       {
         // TODO: apply member discount
+        total *= 0.9;
       }
 
       // If buying more than 5 books, apply additional 5% discount
       if (this.Quantity > 5)
       {
-        // TODO: apply bulk discount
+        total *= 0.95;
       }
 
       return total;
@@ -182,6 +195,15 @@ public class QuestionController : ControllerBase
     public double CalculateLateFee(int daysLate)
     {
       double fee = 0;
+
+      if (daysLate <= 5)
+      {
+        fee = daysLate * 1000;
+      }
+      else
+      {
+        fee = 5000 + (daysLate - 5) * 2000;
+      }
 
       // TODO: calculate fee correctly
       // First 5 days: 1000 per day
